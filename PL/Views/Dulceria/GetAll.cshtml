@@ -1,0 +1,31 @@
+﻿@model ML.Dulceria
+@{
+    ViewData["Title"] = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="/css/Dulceria.css">
+<h1 class="display-4 text-center fw-bold">Dulceria</h1>
+
+<div class="container h-100">
+    <div class="row align-middle">
+        @foreach (ML.Dulceria dulceria in Model.Dulcerias)
+        {
+            <div class="col-md-6 col-lg-4 column">
+               <div class="card gr-1"> 
+                   <div class="txt">
+                        <h1 class="fw-bolder">@dulceria.Nombre</h1>
+                        <p class="fw-bolder">Selecciona tus alimentos</p>
+                        <p class ="fw-bolder">Precio: @dulceria.Precio</p>
+                        <p><a class="btn btn-secondary" href="@Url.Action("AddCarrito", "Dulceria", new {IdDulceria = dulceria.IdDulceria})"><i class="fa-solid fa-cart-shopping"></i></a></p>
+                        <img class="mapaderecha" style="width:100px" src="data:image/*;base64,@dulceria.Imagen"/>
+                   </div>
+                   
+               </div>
+
+    
+            
+        </div>
+
+        }
+    </div>
+</div>

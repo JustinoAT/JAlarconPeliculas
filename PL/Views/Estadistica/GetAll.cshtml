@@ -1,0 +1,124 @@
+﻿@model ML.Cine
+@{
+    ViewData["Title"] = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="https://cdn.canvasjs.com/jquery.canvasjs.min.js"></script>
+<style>
+    #map {
+        height: 300px;
+        align-content: end;
+    }
+
+    .mapaderecha {
+        float: right;
+    }
+
+</style>
+<!-- prettier-ignore -->
+<script>
+    (g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })({
+        key: "AIzaSyCSKBDdPPlfca_zTwyxKiicRQn1qfgRjLw",
+        v: "weekly",
+    });
+</script>
+<h1 class="display-4 text-center fw-bold">Estadisticas</h1>
+<br>
+<div class="row">
+
+    <div class="col-md-6">
+        <h1 class="text-center display-6">Grafica</h1>
+        <h1 class="text-center display-6"></h1>
+        <br>
+        <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+        
+    </div>
+
+    <div class="col-md-6 mapaderecha">
+        
+        <h1 class="text-center display-6">Puntos de venta</h1>
+        <br>
+        <div id="map"></div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        let map;
+        let marker;  // Variable para el marcador
+
+        async function initMap() {
+            const position = { lat: 19.430570307662446, lng: -99.16166352568936 };
+            const { Map } = await google.maps.importLibrary("maps");
+
+            map = new Map(document.getElementById("map"), {
+                zoom: 11,
+                center: position,
+                mapId: "DEMO_MAP_ID",
+            });
+
+        @foreach (ML.Cine cine in Model.Cines)
+        {
+            <text>
+                                var geocodes = new google.maps.Geocoder();
+                geocodes.geocode({ 'address': '@cine.Direccion' }, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var direccion = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() };
+                        var contentString = `<div><h3>@cine.Nombre</h3><p>Ventas: @cine.Ventas</p><p>Direccion: @cine.Direccion</p><p>Zona: @cine.Zona.Nombre</p></div>`;
+
+                        var infowindow = new google.maps.InfoWindow({
+                            content: contentString
+                        });
+
+                        var marker = new google.maps.Marker({
+                            position: direccion,
+                            map,
+                            title: "Mapa",
+                        });
+
+                        marker.addListener('click', function () {
+                            infowindow.open(map, marker);
+                        });
+                    }
+                });
+            </text>
+        }
+                }
+
+        initMap();
+    </script>
+    <script>
+        window.onload = function () {
+
+            var options = {
+                title: {
+                    text: "Ventas de los cines por zona."
+                },
+                subtitles: [{
+                    text: ""
+                }],
+                animationEnabled: true,
+                data: [{
+                    type: "pie",
+                    startAngle: 40,
+                    toolTipContent: "<b>{label}</b>: {y}%",
+                    showInLegend: "true",
+                    legendText: "{label}",
+                    indexLabelFontSize: 16,
+                    indexLabel: "{label} - {y}%",
+                    dataPoints: [
+                        { y: @Model.Estadisctica.Norte, label: "Norte" },
+                        { y: @Model.Estadisctica.Sur, label: "Sur" },
+                        { y: @Model.Estadisctica.Este, label: "Este" },
+                        { y: @Model.Estadisctica.Oeste, label: "Oeste" }
+                    ]
+                }]
+            };
+            $("#chartContainer").CanvasJSChart(options);
+
+        }
+    </script>
+}
+

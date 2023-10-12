@@ -1,0 +1,62 @@
+﻿@model ML.Carrito
+@{
+    ViewData["Title"] = "Carrito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Carrito</h1>
+
+@if (Model.Carritos == null || Model.Carritos.Count == 0)
+{
+    <div class="alert alert-warning" role="alert">
+        Aun no tienes productos agregados ):
+    </div>
+}
+else
+{
+    <div class="btn-group d-flex" role="group" aria-label="Button group with nested dropdown">
+        <button type="button" onclick="AbrirModal()" class="btn btn-dark"><i class="fa-solid fa-money-bill"></i> Comprar</button>
+        <button type="button" class="btn btn-dark"><i class="fa-solid fa-broom"></i> Limpiar</button>
+        <button type="button" class="btn btn-outline-danger"><i class="fa-solid fa-door-open"></i> Regresar</button>
+    </div>
+    <br />
+    <table class="table table-dark table-hover table-bordered table-responsive">
+        <thead>
+            <tr class="table-secondary">
+                <td class="text-center">Nombre</td>
+                <td class="text-center">Precio</td>
+                <td class="text-center">Imagen</td>
+                <td class="text-center">Agregar</td>
+                <td class="text-center">cantidad</td>
+                <td class="text-center">Quitar</td>
+                <td class="text-center">Eliminar</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ML.Dulceria dulceria in Model.Carritos)
+            {
+                <tr>
+                    <td>@dulceria.Nombre</td>
+                    <td>$ @dulceria.Precio</td>
+                    @if (dulceria.Imagen != null)
+                    {
+                        <td class="text-center"><img id="Img" src="data:image/*;base64,@dulceria.Imagen" style="width:50px ; height:50px" /></td>
+                    }
+                    else
+                    {
+                        <td class="text-center"><img id="Img" src="https://st.depositphotos.com/2934765/53192/v/450/depositphotos_531920820-stock-illustration-photo-available-vector-icon-default.jpg" style="width:50px ; height:50px" /></td>
+                    }
+
+                    <td><button class="btn btn-success"><i class="fa-solid fa-square-plus"></i></button> </td>
+                    <td>@dulceria.Cantidad </td>
+                    <td><button class="btn btn-warning"><i class="fa-solid fa-square-minus"></i></button> </td>
+                    <td><button class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></button> </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    <label>Total: $ @Model.Total</label>
+    <input type="text" id="txtLatitud" hidden />
+    <input type="text" id="txtLongitud" hidden />
+}

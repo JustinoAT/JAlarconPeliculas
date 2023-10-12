@@ -1,0 +1,39 @@
+﻿@model Pelicula
+@{
+    ViewData["Title"] = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<link rel="stylesheet" href="/css/GetAll.css" />
+<div class="text-center">
+    <h2 class="display-4 text-white">Peliculas</h2>
+    <br>
+    <br>
+</div>
+<div class="d-flex justify-content-end">
+    <a class="btn btn-success" href="@Url.Action("GetFavorite", "Pelicula")"><i>Favoritas.</i></a>
+    <br>
+    <br>
+</div>
+<br>
+<br>
+<div class="container">
+    <div class="row">
+        @foreach (Pelicula pelicula in Model.Peliculas)
+        {
+            <div class="col-md-4">
+                <div class="cardjat" style="width: 18rem;">
+                    <img src="@pelicula.Imagen" class="card-img-top" alt="...">
+                    <div class="card-body text-white">
+                        <h5 class="card-title">@pelicula.Nombre</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Fecha de estreno: @pelicula.Fecha</h6>
+                        <p class="card-text">@pelicula.Descripcion</p>
+                        <a class="btn btn-primary" href="@Url.Action("Favorite", "Pelicula", new { IdMovie = pelicula.IdMovie, Favorite = true})">Favorito</a>
+                    </div>
+
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
