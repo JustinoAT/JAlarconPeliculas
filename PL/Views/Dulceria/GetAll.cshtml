@@ -16,7 +16,7 @@
                         <h1 class="fw-bolder">@dulceria.Nombre</h1>
                         <p class="fw-bolder">Selecciona tus alimentos</p>
                         <p class ="fw-bolder">Precio: @dulceria.Precio</p>
-                        <p><a class="btn btn-secondary" href="@Url.Action("AddCarrito", "Dulceria", new {IdDulceria = dulceria.IdDulceria})"><i class="fa-solid fa-cart-shopping"></i></a></p>
+                        <a style="opacity:initial" class="btn btn-secondary" href="@Url.Action("AddCarrito", "Dulceria", new {IdDulceria = dulceria.IdDulceria})"><i class="fa-solid fa-cart-shopping"></i></a>
                         <img class="mapaderecha" style="width:100px" src="data:image/*;base64,@dulceria.Imagen"/>
                    </div>
                    

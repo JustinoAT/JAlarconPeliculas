@@ -3,6 +3,66 @@
     ViewData["Title"] = "Carrito";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .modalDialog {
+        position: fixed;
+        font-family: Arial, Helvetica, sans-serif;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.8);
+        z-index: 99999;
+        opacity: 0;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+        pointer-events: none;
+    }
+
+        .modalDialog:target {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modalDialog > div {
+            width: 400px;
+            position: relative;
+            margin: 10% auto;
+            padding: 5px 20px 13px 20px;
+            border-radius: 10px;
+            background: #fff;
+            background: -moz-linear-gradient(#fff, #999);
+            background: -webkit-linear-gradient(#fff, #999);
+            background: -o-linear-gradient(#fff, #999);
+            -webkit-transition: opacity 400ms ease-in;
+            -moz-transition: opacity 400ms ease-in;
+            transition: opacity 400ms ease-in;
+        }
+
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: -12px;
+        text-align: center;
+        top: -10px;
+        width: 24px;
+        text-decoration: none;
+        font-weight: bold;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 1px 1px 3px #000;
+        -webkit-box-shadow: 1px 1px 3px #000;
+        box-shadow: 1px 1px 3px #000;
+    }
+
+        .close:hover {
+            background: #00d9ff;
+        }
+</style>
 
 <h1>Carrito</h1>
 
@@ -37,7 +97,7 @@ else
             {
                 <tr>
                     <td>@dulceria.Nombre</td>
-                    <td>$ @dulceria.Precio</td>
+                    <td class="precio">@dulceria.Precio</td>
                     @if (dulceria.Imagen != null)
                     {
                         <td class="text-center"><img id="Img" src="data:image/*;base64,@dulceria.Imagen" style="width:50px ; height:50px" /></td>
@@ -47,16 +107,106 @@ else
                         <td class="text-center"><img id="Img" src="https://st.depositphotos.com/2934765/53192/v/450/depositphotos_531920820-stock-illustration-photo-available-vector-icon-default.jpg" style="width:50px ; height:50px" /></td>
                     }
 
-                    <td><button class="btn btn-success"><i class="fa-solid fa-square-plus"></i></button> </td>
-                    <td>@dulceria.Cantidad </td>
-                    <td><button class="btn btn-warning"><i class="fa-solid fa-square-minus"></i></button> </td>
-                    <td><button class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></button> </td>
+                    <td><button class="btn btn-success" onclick="actualizarTotal()"><i class="fa-solid fa-square-plus"></i></button> </td>
+                    <td class="cantidad">@dulceria.Cantidad </td>
+                    <td><button class="btn btn-warning" onclick="actualizarTotal()"><i class="fa-solid fa-square-minus"></i></button> </td>
+                    <td><button class="btn btn-danger" onclick="actualizarTotal()"><i class="fa-solid fa-trash-can"></i></button> </td>
                 </tr>
 
             }
         </tbody>
     </table>
-    <label>Total: $ @Model.Total</label>
+    <label id="total">Total: $ @Model.Total</label>
+    <br />
+    <br />
+    <a class="btn btn-secondary" href="#openModal">Confirmar compra.</a>
     <input type="text" id="txtLatitud" hidden />
     <input type="text" id="txtLongitud" hidden />
+    <div id="openModal" class="modalDialog">
+        <div>
+            <a href="#close" title="Close" class="close">X</a>
+            <h2>Desglose de productos.</h2>
+            <table class="table table-dark table-hover table-bordered table-responsive">
+                <thead>
+                    <tr class="table-secondary">
+                        <td class="text-center">Nombre</td>
+                        <td class="text-center">Precio</td>
+                        <td class="text-center">Imagen</td>
+          
+                        <td class="text-center">cantidad</td>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ML.Dulceria dulceria in Model.Carritos)
+                    {
+                        <tr>
+                            <td>@dulceria.Nombre</td>
+                            <td >@dulceria.Precio</td>
+                            @if (dulceria.Imagen != null)
+                            {
+                                <td class="text-center"><img id="Img" src="data:image/*;base64,@dulceria.Imagen" style="width:50px ; height:50px" /></td>
+                            }
+                            else
+                            {
+                                <td class="text-center"><img id="Img" src="https://st.depositphotos.com/2934765/53192/v/450/depositphotos_531920820-stock-illustration-photo-available-vector-icon-default.jpg" style="width:50px ; height:50px" /></td>
+                            }   
+                            <td >@dulceria.Cantidad </td>
+
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+            <a class="btn btn-secondary" href="#openModal2">Finalizar compra.</a>
+        </div>
+    </div>
+    //Modal para finalizar cerrando sesion y descargando pdf
+    <div id="openModal2" class="modalDialog">
+        <div>
+            <a href="#close" title="Close" class="close">X</a>
+            <h2>Finalizar compra.</h2>
+            <a class="btn btn-secondary" href="@Url.Action("GenerarPDF", "Dulceria")">Generar PDF</a>
+            <a class="btn btn-secondary align-content-end" href="@Url.Action("FinalizarCompra", "Dulceria")">Finalizar</a>
+        </div>
+    </div>
 }
+
+<script>
+    function incrementarCantidad(button) {
+        // Encuentra el elemento de cantidad en la misma fila
+        var cantidadElement = button.parentElement.previousElementSibling;
+
+        // Obtén la cantidad actual y aumenta en uno
+        var cantidadActual = parseInt(cantidadElement.innerText);
+        cantidadElement.innerText = cantidadActual + 1;
+
+        // Llama a la función para recalcular el total
+        calcularTotal();
+    }
+
+    function calcularSubtotal() {
+        let productos = document.querySelectorAll('.precio');
+        let cantidad = document.querySelectorAll('.cantidad');
+        let subtotalPorProducto = 0;
+
+        for (let i = 0; i < productos.length; i++) {
+            let precio = parseFloat(productos[i].textContent);
+            let cantidadProducto = parseInt(cantidad[i].textContent);
+            subtotalPorProducto += precio * cantidadProducto;
+        }
+
+        return subtotalPorProducto;
+    }
+
+    function actualizarTotal() {
+        let subtotal = calcularSubtotal();
+        let totalElement = document.querySelector('#total');
+        totalElement.innerText = 'Total: $ ' + subtotal.toFixed(2);
+    }
+
+    // Llama a esta función para calcular y actualizar el total al cargar la página
+    window.onload = function () {
+        actualizarTotal();
+    };
+</script>

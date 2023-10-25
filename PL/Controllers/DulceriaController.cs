@@ -1,5 +1,9 @@
 ﻿using ML;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 
 namespace PL.Controllers
@@ -103,6 +107,79 @@ namespace PL.Controllers
                 GetCarrito(carrito);
                 return View(carrito);
             }
+
+        }
+        public ActionResult ClearCarrito()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Carrito");
+        }
+        public ActionResult GenerarPDF()
+        {
+            iTextSharp.text.Font _standardFont = new iTextSharp.text.Font(iTextSharp.text.Font.FontFamily.HELVETICA, 12, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+            ML.Carrito carrito = new ML.Carrito();
+            carrito.Carritos = new List<object>();
+            GetCarrito(carrito);
+
+            Document document = new Document();
+
+            PdfPTable tblProductos = new PdfPTable(4);
+            tblProductos.WidthPercentage = 100;
+
+            PdfPCell celdaNombre = new PdfPCell(new Phrase("Nombre", _standardFont));
+            celdaNombre.BorderWidth = 0;
+            celdaNombre.BorderWidthBottom = 0.75f;
+            PdfPCell clDescripcion = new PdfPCell(new Phrase("Descripción", _standardFont));
+            clDescripcion.BorderWidth = 0;
+            clDescripcion.BorderWidthBottom = 0.75f;
+            PdfPCell celdaCantidad = new PdfPCell(new Phrase("Cantidad", _standardFont));
+            celdaCantidad.BorderWidth = 0;
+            celdaCantidad.BorderWidthBottom = 0.75f;
+            PdfPCell celdaPrecio = new PdfPCell(new Phrase("Precio", _standardFont));
+            celdaPrecio.BorderWidth = 0;
+            celdaPrecio.BorderWidthBottom = 0.75f;
+            int total = 0;
+            foreach (ML.Dulceria dulce in carrito.Carritos)
+            {
+                celdaNombre = new PdfPCell(new Phrase(dulce.Nombre, _standardFont));
+                celdaNombre.BorderWidth = 0;
+                celdaCantidad = new PdfPCell(new Phrase(dulce.Cantidad.ToString(), _standardFont));
+                celdaCantidad.BorderWidth = 0;
+                celdaPrecio = new PdfPCell(new Phrase(dulce.Precio.ToString(), _standardFont));
+                total += (dulce.Cantidad * int.Parse(dulce.Precio.ToString("0")));
+                celdaPrecio.BorderWidth = 0;
+                tblProductos.AddCell(clDescripcion);
+                tblProductos.AddCell(celdaNombre);
+                tblProductos.AddCell(celdaCantidad);
+                tblProductos.AddCell(celdaPrecio);
+            }
+
+            MemoryStream memoryStream = new MemoryStream();
+            PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+
+            document.Open();
+            document.Add(new Paragraph("Productos"));
+            document.Add(Chunk.NEWLINE);
+            document.Add(tblProductos);
+            document.Add(Chunk.NEWLINE);
+            document.Add(new Paragraph("Total ($): " + total));
+       
+            document.Close();
+
+            HttpContext.Session.Clear();
+            
+
+            return File(memoryStream.ToArray(), "application/pdf", "ReciboCompra-" + DateTime.Now + ".pdf");
+        
+
+        }
+        public ActionResult FinalizarCompra()
+        {
+
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("GetAll");
+
 
         }
     }

@@ -19,6 +19,8 @@ public partial class JalarconCineContext : DbContext
 
     public virtual DbSet<Dulcerium> Dulceria { get; set; }
 
+    public virtual DbSet<Usuario> Usuarios { get; set; }
+
     public virtual DbSet<Zona> Zonas { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -56,6 +58,26 @@ public partial class JalarconCineContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.Precio).HasColumnType("decimal(5, 2)");
+        });
+
+        modelBuilder.Entity<Usuario>(entity =>
+        {
+            entity.HasKey(e => e.IdUsuario).HasName("PK__Usuario__5B65BF97D08E838C");
+
+            entity.ToTable("Usuario");
+
+            entity.Property(e => e.Contrasena)
+                .HasMaxLength(20)
+                .HasColumnName("contrasena");
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Username)
+                .HasMaxLength(50)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Zona>(entity =>

@@ -64,6 +64,7 @@ namespace BL
                     {
 
                         ML.Dulceria dulceria = new ML.Dulceria();
+                        dulceria.IdDulceria = query.IdDulceria;
                         dulceria.Nombre = query.Nombre;
                         dulceria.Precio = query.Precio;
                         dulceria.Imagen = query.Imagen;

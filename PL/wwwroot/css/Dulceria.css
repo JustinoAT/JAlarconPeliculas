@@ -44,10 +44,6 @@
                 opacity: 1;
             }
 
-        .column:hover a {
-            color: rgba(255, 255, 255, 1);
-        }
-
             .column:hover a:after {
                 width: 10%;
             }
@@ -83,35 +79,7 @@
             opacity: 0;
             color: rgba(255, 255, 255, 1);
         }
-        .card .txt a {
-            font-size: 0.7rem;
-            font-family: 'Open Sans', sans-serif;
-            letter-spacing: 0rem;
-            margin-top: 33px;
-            opacity: 0;
-            color: rgba(255, 255, 255, 1);
-        }
-
-    .card a {
-        z-index: 3;
-        font-size: 0.7rem;
-        color: rgba(0, 0, 0, 1);
-        margin-left: 1rem;
-        position: relative;
-        bottom: -0.5rem;
-        text-transform: uppercase;
-    }
-
-        .card a:after {
-            content: "";
-            display: inline-block;
-            height: 0.5em;
-            width: 0;
-            margin-right: -100%;
-            margin-left: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 1);
-            transition: 0.5s;
-        }
+  
 
     .card .ico-card {
         position: absolute;
